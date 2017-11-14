@@ -86,21 +86,10 @@ angular.module("sistema").controller("sistemaCtrl", function ($scope, $window) {
         if(contemElemento($scope.playlists,playlistNome) === false){
             window.alert("PlayList nao existente no sistema")
         }
-
-        musicaNaoExistente = false
-        angular.forEach($scope.artistas, function (value,index) {
-            if(value.nome === artistaNome){
-                angular.forEach(value.albuns, function (value,index) {
-                    if(contemElemento(value.musicas,musicaNome)===false){
-                        musicaNaoExistente = true;
-                    }
-                });
-            }
-        });
-
+     
         angular.forEach($scope.playlists, function (value,index) {
             if(value.nome === playlistNome){
-                if(contemElemento(value.musicas,musicaNome)===false && musicaNaoExistente==false){
+                if(contemElemento(value.musicas,musicaNome)===false){
                     value.musicas.push(musica);
                 }else{
                     window.alert("Musica já adicionada na PlayList ou nao existe!")
