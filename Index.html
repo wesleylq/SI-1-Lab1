@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html ng-app="sistema">
+<head>
+    <meta charset="UTF-8">
+    <title>Pagina Incial</title>
+    <script type="text/javascript" src= "lib/angular-1.6.6/angular.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="lib/angular-1.6.6/docs/components/bootstrap-3.1.1/css/bootstrap.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/sistemaCtrl.js"></script>
+
+    <style>
+        .jumbotron{
+
+            text-align: center;
+            margin-left: auto;
+            margin-right: auto;
+            font-size: larger;
+
+        }
+        .container{
+            background: white;
+            color: darkgrey;
+
+        }
+    </style>
+
+
+
+</head>
+<body ng-controller="sistemaCtrl" >
+
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand"> PlayList Manager</a>
+        </div>
+        <ul class="nav navbar-nav">
+            <li><a href="#" ng-click="menu='crpl'">Criar PlayList</a></li>
+            <li><a href="#" ng-click="menu='pls'">Ver PlayLists</a></li>
+            <li><a href="#" ng-click="menu='pesq'">Pesquisar Artista</a></li>
+            <li><a href="#" ng-click="menu='addart'">Adicionar Artista</a></li>
+            <li><a href="#" ng-click="menu='addmus'">Adicionar Musica</a></li>
+
+
+        </ul>
+    </div>
+</nav>
+
+    <div ng-switch="menu">
+
+        <div class="jumbotron" ng-switch-when="addart">
+
+        <input class = "form-control" ng-model="nome" placeholder="Nome do Artista..."/>
+        <button type="button" class="btn btn-primary btn-block btn-lg" ng-disabled="!nome" ng-click= "adicionaArtista(nome) ">Adicionar</button>
+
+
+    </div>
+    <div class="jumbotron" ng-switch-when="addmus">
+        <form name = "addMusForm">
+        <input class = "form-control" ng-model="musica.nome" ng-required="true" placeholder="Nome do musica..."/>
+        <input class = "form-control" ng-model="artista" ng-required="true" placeholder="Nome do artista..."/>
+        <input class = "form-control" ng-model="album" ng-required="true" placeholder="Nome do album..."/>
+        <input class = "form-control" ng-model="musica.duracao" ng-required="true" placeholder="Duração da musica..."/>
+        <input class = "form-control" ng-model="musica.ano" ng-required="true" placeholder="Ano da musica..."/>
+        <button type="button" class="btn btn-primary btn-block btn-lg" ng-disabled="addMusForm.$invalid" ng-click= "adicionaAlbum(artista,album,musica)">Adicionar Musica ao Sistema</button>
+        </form>
+    </div>
+
+    <div class="jumbotron" ng-switch-when="addmus">
+        <form name = "addMusPLForm">
+
+        <input class = "form-control" ng-model="playlistNome" ng-required="true" placeholder="Nome da PlayList..."/>
+        <input class = "form-control" ng-model="musicaNome" ng-required="true" placeholder="Nome do musica..."/>
+        <input class = "form-control" ng-model="artistaNome" ng-required="true"  placeholder="Nome do artista..."/>
+
+        <button type="button" class="btn btn-primary btn-block btn-lg" ng-disabled="addMusPLForm.$invalid" ng-click= "adicionaMusicaPlayList(playlistNome,artistaNome,musicaNome)">Adicionar Musica a uma PlayList</button>
+
+    </div>
+
+
+    <div class="jumbotron" ng-switch-when="pesq">
+
+        <input text="search" class="form-control" placeholder="Pesquisa..." ng-model="pesquisa"/>
+
+        <div>
+        <table class="table">
+
+            <th >Favoritar </th>
+            <th>Arista</th>
+            <th>Avaliação</th>
+
+            <tr ng-repeat= "artista in artistas | filter: pesquisa" align="left">
+            <td><input type= "checkbox" ng-model="artista.favorito"> </td>
+            <td><a ng-href = "#"  ng-click="mostraArtistaInfo(artista)">{{ artista.nome }}  </a></td>
+            <td><input type="number" class="form-control-feedback" ng-model="artista.nota" placeholder="nota..." min="0" max="5"></td>
+
+            </tr>
+        </table>
+        </div>
+
+        <div class = "container bg-primary" align="left" ng-show="varMostraArtista">
+            <thead>
+            <table class="table">
+                <tr>
+                    <h3>Artista: {{artistaInfo.nome}}</h3>
+
+                </tr>
+                </thead>
+                <thead>
+                    <tr>
+                        <h3>Albuns:</h3>
+
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat= "album in artistaInfo.albuns">
+                        <td>{{album.nome}}</td>
+                    </tr>
+                    </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+    <div class="jumbotron" ng-switch-when="crpl">
+
+        <form name="plForm" >
+        <input class = "form-control" ng-model="playlistNome" placeholder="Nome da playlist..."/>
+
+        <button type="button" class="btn btn-primary btn-block btn-lg" ng-disabled="!playlistNome" ng-click= "adicionaPlayList(playlistNome)">Adicionar PlayList</button>
+
+
+        </form>
+    </div>
+
+    <div class = "jumbotron" ng-switch-when="pls">
+
+
+        <table align="center">
+
+        <tr ng-repeat="playlist in playlists | filter:''">
+
+           <td><a href="#" ng-click="mostraPlayListInfo(playlist)"> <h3>{{playlist.nome}}</h3></a></td>
+            <td><a href="#"><span class="glyphicon glyphicon-trash"  ng-click= "excluiPlayList(playlist)"></span></a></td>
+
+       </tr>
+        </table>
+
+
+        <div class="container" ng-show="varMostraPlayList">
+            <table class="table" ng-repeat=" musica in playlistInfo.musicas | filter:''">
+
+                <h3>PlayList: {{playlistInfo.nome}}</h3>
+
+                <tr ng-repeat=" musica in playlistInfo.musicas | filter:''" align="left">
+                    <thead>
+                    <tr>
+                        <th>Artista: {{ musica.artista}}</th>
+                    </tr>
+                    </thead>
+
+                    <thead>
+                    <tr>
+                    <th>Musica: {{ musica.nome }}</th>
+                    <th><a href="#"><span class="glyphicon glyphicon-trash" ng-click= "excluiMusica(playlistInfo,musica)"></span></a></th>
+                    </tr>
+                    </thead>
+
+                </tr>
+
+            </table>
+
+        </div>
+
+    </div>
+
+    </div>
+
+
+
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
